@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <title>Tic Tac Toe</title>
+</head>
+<body>
+    <div class="pre-game container">
+        <p>Choose Between :</p>
+        <div class="controls">
+            <div data-select="X" class="control">X</div>
+            <p>Or</p>
+            <div data-select="O" class="control">O</div>
+        </div>
+    </div>
+    <div class="game inactive">
+        <div >
+            <div class="game-tags"><div>Player</div> <div id="vs">VS</div> <div>AI</div></div>
+            <div id="round-message"></div>
+        </div>
+        <div class="game-board">
+            <div data-box="0" class="box"></div>
+            <div data-box="1" class="box"></div>
+            <div data-box="2" class="box"></div>
+            <div data-box="3" class="box"></div>
+            <div data-box="4" class="box"></div>
+            <div data-box="5" class="box"></div>
+            <div data-box="6" class="box"></div>
+            <div data-box="7" class="box"></div>
+            <div data-box="8" class="box"></div>
+        </div>
+        <button class="restart-btn">Restart</button>
+    </div>
+</body>
+</html>
