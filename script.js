@@ -1,29 +1,5 @@
 
-
-
-
-
-
-
-
-
 let Player = (sign) => {
-   /*let playerSelector = document.querySelectorAll(".control");
-   let player;
-   let computer;
-
-   playerSelector.forEach(selector => selector.addEventListener("click",(e)=> setPlayerSign(e)));
-
-   function setPlayerSign(e){
-      player= e.target.dataset.select;
-
-      if(player === 'X'){
-         computer= 'O';
-      } else {computer= 'X'};
-   }
-
-   const getPlayerSign= ()=> player;
-   const getComputerSign= ()=> computer;*/
    this.sign= sign;
 
    const getSign= ()=>{
@@ -34,9 +10,7 @@ let Player = (sign) => {
 };
 
 let gameBoardSetup= (() =>{
-   
       let board = ["", "", "", "", "", "", "", "", ""];
-      let draw= false;
       
       let boardInterface = document.querySelector(".game-board").querySelectorAll(".box");
 
@@ -61,8 +35,7 @@ let gameBoardSetup= (() =>{
       return{markFieldBackend, getField, resetBoard}
 })();
 
-let displayController= (()=>{
-      
+let displayController= (()=>{     
    let roundMessage = document.getElementById("round-message");
    let playerSelector = document.querySelectorAll(".control");
    let preGameInterface = document.querySelector(".pre-game");
@@ -74,19 +47,18 @@ let displayController= (()=>{
 
 
    //event Binding
-
-   //change Platform
+      //change Platform
    playerSelector.forEach(selector => selector.addEventListener("click",()=> {
       preGameInterface.classList.toggle('inactive');
       gameInterface.classList.toggle('inactive');
    }));
-   //get player sign
+      //get player sign
    playerSelector.forEach(selector => selector.addEventListener("click",(e)=> {setPlayerSign(e)}));
-
+      //mark field, play a round, check if the game is over  
    boardInterface.forEach(box =>box.addEventListener("click", (e)=> {  if( gameLogic.getIsOver() || e.target.textContent !== '') return;
                                                                        gameLogic.playRound(e.target.dataset.box);
                                                                        markField()}));
-
+      //restart button logic
    restartBtn.addEventListener("click",()=> reset());
      
    const markField = () =>{
@@ -94,12 +66,13 @@ let displayController= (()=>{
            boardInterface[i].textContent = gameBoardSetup.getField(i);
         }
    };
-
+   
+   //Setting game messages
    const setRoundMessage= ()=> {
       roundMessage.textContent = `It's ${gameLogic.getCurrentPlayer()}'s Turn`
    }
 
-   const setResultMessage= ()=>{
+   const setWinningMessage= ()=>{
       roundMessage.textContent = `${gameLogic.getCurrentPlayer()} has Won !!!`;
    }
    
@@ -110,14 +83,14 @@ let displayController= (()=>{
    const resetMessage = ()=>{
       roundMessage.textContent = "It's Player's Turn" 
    }
-
+   
+   //Setting players signs
    const setPlayerSign =(e) =>{
       player= e.target.dataset.select;
-  
       if(player === 'X'){
          computer= 'O';
       } else {computer= 'X'};
-   };
+   }
 
    const reset = ()=>{
       gameBoardSetup.resetBoard();
@@ -125,14 +98,13 @@ let displayController= (()=>{
       markField();
       resetMessage();
    }
-
-     
-   let getPlayerSign= ()=> { return player;}
-   let getComputerSign= ()=> { return computer;}
   
-   return {getPlayerSign, getComputerSign, setRoundMessage, setResultMessage, setDrawMessage}
+   //Getting players signs
+   let getPlayerSign= ()=> {return player;}
+   let getComputerSign= ()=> {return computer;}
+  
+   return {getPlayerSign, getComputerSign, setRoundMessage, setWinningMessage, setDrawMessage}
 })();
-
 
 let gameLogic= (() => {
      let player;
@@ -141,13 +113,14 @@ let gameLogic= (() => {
      let isOver = false;
 
      function playRound(index){
+        //getting the players signs, and setting them up
         player= Player(displayController.getPlayerSign());
         computer= Player(displayController.getComputerSign());
 
         gameBoardSetup.markFieldBackend(index, getCurrentPlayerSign());
-
+        //checking for winning cases every round
         if(checkWinner(Number(index))){
-           displayController.setResultMessage();
+           displayController.setWinningMessage();
            isOver = true;
            return;
         };
@@ -156,15 +129,14 @@ let gameLogic= (() => {
            isOver = true;
            return;
         };
-        
         round++;  
         displayController.setRoundMessage();
      }
-
+     //checking if it's the player round or computer round
      let getCurrentPlayerSign= ()=>{
          return round % 2 === 1 ? player.getSign() : computer.getSign();
      }
-     
+     //Setting the current player
      const getCurrentPlayer= ()=>{
          if(getCurrentPlayerSign() === player.getSign()){
            return'Player'
@@ -172,7 +144,7 @@ let gameLogic= (() => {
            return 'Computer'
          }
         }
-
+     //check for winning function
      const checkWinner= (boxIndex)=> {
       const winCombinations= [
          [0, 1, 2],
