@@ -57,9 +57,13 @@ body {
     border-radius: 15px;
 }
 
+.game-mode{
+    color:#1a1712;
+}
+
 /* Pre game interface*/
 .pre-game {
-    padding: 40px;
+    padding: 35px;
     width: auto;
     height: auto;
     display: flex;
@@ -67,8 +71,8 @@ body {
     align-items: center;
     background-color: #C879FF;
     border: 7px solid #1a1712;
-    box-shadow: 20px 20px 0 0 #5ADBFF;
-    font-size: 40px;
+    box-shadow: 20px 20px 0 0 #ff7e06;
+    font-size: 35px;
 }
 
 .controls {
@@ -108,17 +112,17 @@ body {
     background-color: #C879FF;
     border: 7px solid #1a1712;
     /*box-shadow: 20px 20px 0 0 rgba(90, 219, 255, .8);*/
-    box-shadow: 20px 20px 0 0 #5ADBFF;
+    box-shadow: 20px 20px 0 0 #ff7e06;
     font-size: 40px;
 }
 
 .game-tags {
-    background-color: #FF6C3D;
+    background-color: #5ADBFF;
     border-bottom: 5px solid #1a1712;;
     width: 500px;
-    height: 70px;
+    height: 60px;
     margin-top: -30px;
-    font-size: 25px;
+    font-size: 20px;
     display: flex;
     justify-content: center;
     align-items: flex-start;

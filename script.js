@@ -47,27 +47,26 @@ let displayController = (() => {
    let playerSelector = document.querySelectorAll(".control");
    let preGameInterface = document.querySelector(".pre-game");
    let gameInterface = document.querySelector(".game");
+   let dropdown = document.querySelector('.dropdown');
    let boardInterface = document.querySelector(".game-board").querySelectorAll(".box");
    let restartBtn = document.querySelector(".restart-btn");
    let player;
    let computer;
    let currentMode= 'easyMode';
+   let gameModeIndicator = document.getElementById("game-mode");
    //mode selection variables
    let multiplayer = document.getElementById("multiplayer");
    let easyMode = document.getElementById("easy-mode");
    //let hardMode = document.getElementById("hard-mode");
 
-   multiplayer.addEventListener("click",()=> { reset();
-                                               currentMode='multiplayer';});
-   easyMode.addEventListener("click", ()=> { reset();
-                                             currentMode='easyMode'});
-   //hardMode.addEventListener("click", hardMode);
+   
 
    //event Binding
    //change Platform
    playerSelector.forEach(selector => selector.addEventListener("click", () => {
       preGameInterface.classList.toggle('inactive');
       gameInterface.classList.toggle('inactive');
+      dropdown.classList.remove('inactive');
    }));
    //get player sign
    playerSelector.forEach(selector => selector.addEventListener("click", (e) => { setPlayerSign(e) }));
@@ -80,6 +79,15 @@ let displayController = (() => {
                                                                         }
                                                                         markField();
                                                                       }));
+
+  multiplayer.addEventListener("click",()=> {  currentMode='multiplayer';
+                                               reset();
+                                               gameModeIndicator.textContent= 'Multiplayer';});
+   easyMode.addEventListener("click", ()=> { currentMode='easyMode';
+                                             reset();
+                                             gameModeIndicator.textContent= 'Easy Mode';});
+   //hardMode.addEventListener("click", hardMode);
+
    //restart button logic
    restartBtn.addEventListener("click", () => reset());
 
@@ -91,7 +99,8 @@ let displayController = (() => {
 
    //Setting game messages
    const setRoundMessage = () => {
-      roundMessage.textContent = `It's ${gameLogic.getCurrentPlayer()}'s Turn`
+      roundMessage.textContent = `It's ${gameLogic.getCurrentPlayer()}'s Turn`;
+      console.log(gameLogic.getCurrentPlayer())
    }
 
    const setWinningMessage = () => {
@@ -103,7 +112,11 @@ let displayController = (() => {
    }
 
    const resetMessage = () => {
-      roundMessage.textContent = "It's Player's Turn"
+      if(currentMode ==='multiplayer'){
+         roundMessage.textContent = "It's Player1's Turn"
+      }else if(currentMode ==='easyMode'){
+         roundMessage.textContent = "It's Player's Turn"
+      }
    }
 
    //Setting players signs
@@ -130,107 +143,14 @@ let displayController = (() => {
    return { getPlayerSign, getComputerSign, setRoundMessage, setWinningMessage, setDrawMessage, getCurrentMode }
 })();
 
+
    let gameLogic = (() => {
       let currentPlayer;
       let player;
       let computer;
       let round = 1;
       let isOver = false;
-      //let currentMode= 'easyMode';
-
-      /*let getCurrentMode =()=>{
-         return currentMode= displayController.getCurrentMode()
-      } 
-
-      function setMode(){
-         if(getCurrentMode() ==='easyMode'){
-            easyMode(index)
-         }else if(getCurrentMode() ==='multiPlayer'){
-            multiplayerMode(index)
-         }
-      }
-
-      setMode();*/
-
-  /* function playRound(index) {
-      currentPlayer = 'Player';
-      //getting the players signs, and setting them up
-      player = Player(displayController.getPlayerSign());
-      computer = Player(displayController.getComputerSign());
-      gameBoardSetup.markFieldBackend(index, getCurrentPlayerSign());
-
-      //checking for winning cases every round
-      if (checkWinner(Number(index))) {
-         displayController.setWinningMessage();
-         isOver = true;
-         return;
-      };
-      if (round === 9) {
-         displayController.setDrawMessage();
-         isOver = true;
-         return;
-      };
-      round++;
-      displayController.setRoundMessage();
-      computerPlay();
-   }
-
-   //checking if it's the player round or computer round
-   let getCurrentPlayerSign = () => {
-      //return round % 2 === 1 ? player.getSign() : computer.getSign();
-      if (currentPlayer === 'Player') {
-         return player.getSign();
-      } else {
-         return computer.getSign();
-      }
-   }
-   //Setting the current player
-   const getCurrentPlayer = () => {
-      /* if(getCurrentPlayerSign() === player.getSign()){
-         return'Player'
-       } else {
-         return 'Computer'
-       }
-      return currentPlayer;
-   }
-
-   //computer play logic
-   const computerPlay = () => {
-      currentPlayer = 'Computer';
-      let boardReplica = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-      let currentBoard = gameBoardSetup.getCurrentBoard();
-      let emptyCells = [];
-      //make a board replica
-      for (i = 0; i < currentBoard.length; i++) {
-         if (currentBoard[i] === '') continue;
-         boardReplica[i] = currentBoard[i];
-      }
-      //get the empty cells indexes from the board
-      for (i = 0; i < boardReplica.length; i++) {
-         if (boardReplica[i] !== "X" && boardReplica[i] !== "O") {
-            emptyCells.push(boardReplica[i]);
-         }
-      }
-      //choose a random empty cell
-      let randomCell = Math.floor(Math.random() * emptyCells.length);
-      //mark the chosen random cell in the backend
-      gameBoardSetup.markFieldBackend(emptyCells[randomCell], getCurrentPlayerSign());
-      console.log(emptyCells[randomCell])
-
-      if (checkWinner(emptyCells[randomCell])) {
-         displayController.setWinningMessage();
-         isOver = true;
-         return;
-      };
-      if (round === 9) {
-         displayController.setDrawMessage();
-         isOver = true;
-         return;
-      };
-      round++;
-      currentPlayer = 'Player';
-      displayController.setRoundMessage();
-   }*/
+      
       let getCurrentPlayer= ()=>{
          return currentPlayer;
       }
@@ -244,24 +164,22 @@ let displayController = (() => {
       }
 
    function multiplayerMode(index){
-
+      currentPlayer= 'Player1'
       //checking if it's the player round or computer round
       let getCurrentPlayerSign = () => {
          return round % 2 === 1 ? player.getSign() : computer.getSign();
       }
-      //Setting the current player
+      //Setting the current player for the round message
+      //reversed the current player, because the round doesn't change until i click a cell, which results in unaccurate current player
       let getCurrentPlayer = () => {
-         if(getCurrentPlayerSign() === player.getSign()){
-            currentPlayer='Player'
-         } else {
-            currentPlayer='Computer'
-         }
+         //return round % 2 === 1 ? currentPlayer='Player1' : currentPlayer='Player2';
+         return round % 2 === 1 ? currentPlayer='Player2' : currentPlayer='Player1';
       }
 
       function play(index) {
          //getting the players signs, and setting them up
-         player = Player(displayController.getPlayerSign());
-         computer = Player(displayController.getComputerSign());
+         player1 = Player(displayController.getPlayerSign());
+         player2 = Player(displayController.getComputerSign());
          gameBoardSetup.markFieldBackend(index, getCurrentPlayerSign());
          
 
@@ -279,7 +197,7 @@ let displayController = (() => {
          round++;
          displayController.setRoundMessage();
         }
-
+         getCurrentPlayer();
          play(index);
   
       }
@@ -307,7 +225,6 @@ let displayController = (() => {
          round++;
          displayController.setRoundMessage();
          computerPlay(); 
-         console.log(gameBoardSetup.getCurrentBoard())
       }
 
       //computer play logic
