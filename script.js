@@ -76,18 +76,21 @@ let displayController = (() => {
                                                                            gameLogic.easyMode(e.target.dataset.box);
                                                                         }else if(currentMode === 'multiplayer'){
                                                                            gameLogic.multiplayerMode(e.target.dataset.box);
-                                                                        }
+                                                                        }/*else if(currentMode === 'hardMode'){
+                                                                           gameLogic.hardMode(e.target.dataset.box)
+                                                                        }*/
                                                                         markField();
                                                                       }));
 
   multiplayer.addEventListener("click",()=> {  currentMode='multiplayer';
                                                reset();
-                                               gameModeIndicator.textContent= 'Multiplayer';
-                                               gameLogic.getCurrentPlayer()});
+                                               gameModeIndicator.textContent= 'Multiplayer';});
    easyMode.addEventListener("click", ()=> { currentMode='easyMode';
                                              reset();
                                              gameModeIndicator.textContent= 'Easy Mode';});
-   //hardMode.addEventListener("click", hardMode);
+  /* hardMode.addEventListener("click", ()=> { currentMode='hardMode';
+                                             reset();
+                                             gameModeIndicator.textContent= 'Hard Mode';});*/
 
    //restart button logic
    restartBtn.addEventListener("click", () => reset());
@@ -103,7 +106,7 @@ let displayController = (() => {
       if(currentMode ==='multiplayer'){
          roundMessage.textContent = `It's ${gameLogic.roundMessage()}'s Turn`;
       }else {
-         roundMessage.textContent = "It's Player's Turn";
+         roundMessage.textContent = "It's player's Turn";
       }
    }
 
@@ -118,7 +121,7 @@ let displayController = (() => {
    const resetMessage = () => {
       if(currentMode ==='multiplayer'){
          roundMessage.textContent = "It's Player1's Turn"
-      }else if(currentMode ==='easyMode'){
+      }else if(currentMode ==='easyMode'/*|| currentMode ==='hardMode'*/){
          roundMessage.textContent = "It's Player's Turn"
       }
    }
@@ -160,11 +163,9 @@ let displayController = (() => {
              currentPlayer === 'Player';
              return currentPlayer;
          }
-
       let getCurrentPlayerSign = () => {
             return round % 2 === 1 ? player.getSign() : computer.getSign();
-         }
-
+      }
       //Setting the current player for the round message
       //reversed the current player, because the round doesn't change until i click a cell, which results in unaccurate current player
       let roundMessage= () =>{
@@ -178,20 +179,16 @@ let displayController = (() => {
       player = Player(displayController.getPlayerSign());
       // *player2
       computer = Player(displayController.getComputerSign());
-
       //checking if it's the player round or computer round
          let getCurrentPlayerSign = () => {
             return round % 2 === 1 ? player.getSign() : computer.getSign();
-         }
-         
+         }        
       let getCurrentPlayer = () => {
          return round % 2 === 1 ? currentPlayer='Player1' : currentPlayer='Player2';
          }
 
-      function play(index) {
-         
-         gameBoardSetup.markFieldBackend(index, getCurrentPlayerSign());
-         
+      function play(index) {        
+         gameBoardSetup.markFieldBackend(index, getCurrentPlayerSign());       
          //checking for winning cases every round
          if (checkWinner(Number(index))) {
             displayController.setWinningMessage();
@@ -206,13 +203,11 @@ let displayController = (() => {
          round++;
          displayController.setRoundMessage();
         }
-         getCurrentPlayer();
-         
+         getCurrentPlayer();        
          play(index);  
       }
 
    function easyMode(index){
-
       const play = (index) =>{
          currentPlayer = 'Player';
          //getting the players signs, and setting them up
@@ -230,9 +225,7 @@ let displayController = (() => {
          let getCurrentPlayer = () => {
             return currentPlayer;
             }
-
          gameBoardSetup.markFieldBackend(index, getCurrentPlayerSign());
-
          //checking for winning cases every round
          if (checkWinner(Number(index))) {
             displayController.setWinningMessage();
@@ -250,7 +243,7 @@ let displayController = (() => {
       }
 
       //computer play logic
-      const computerPlay = () => {
+      function computerPlay(){
          currentPlayer = 'Computer';
          let boardReplica = [0, 1, 2, 3, 4, 5, 6, 7, 8];
          let currentBoard = gameBoardSetup.getCurrentBoard();
@@ -289,17 +282,22 @@ let displayController = (() => {
          play(index);
    }
 
-   function hardMode(index){
+  /* function hardMode(index){
+      //let currMark= getCurrentPlayerSign();
+      player = Player(displayController.getPlayerSign());
+      computer = Player(displayController.getComputerSign());
+      let playerSign;
+      let computerSign;
+
       const play = (index) =>{
          currentPlayer = 'Player';
          //getting the players signs, and setting them up
-         player = Player(displayController.getPlayerSign());
-         computer = Player(displayController.getComputerSign());
-
          let getCurrentPlayerSign = () => {
             if (currentPlayer === 'Player') {
+               currentPlayerSign= player.getSign();
                return player.getSign();
             } else {
+               currentPlayerSign= computer.getSign();
                return computer.getSign();
             }
          }
@@ -307,9 +305,7 @@ let displayController = (() => {
          let getCurrentPlayer = () => {
             return currentPlayer;
             }
-
          gameBoardSetup.markFieldBackend(index, getCurrentPlayerSign());
-
          //checking for winning cases every round
          if (checkWinner(Number(index))) {
             displayController.setWinningMessage();
@@ -329,74 +325,123 @@ let displayController = (() => {
       //computer play logic
       const computerPlay = () => {
          currentPlayer = 'Computer';
-         let score;
+         let currentMark= getCurrentPlayerSign();
          let boardReplica = [0, 1, 2, 3, 4, 5, 6, 7, 8];
          let currentBoard = gameBoardSetup.getCurrentBoard();
-         let emptyCells = [];
-         let testPlayOutcomes = [];
+
+         playerSign= player.getSign();
+         computerSign= computer.getSign();
+
          //make a board replica
+         
          for (i = 0; i < currentBoard.length; i++) {
             if (currentBoard[i] === '') continue;
             boardReplica[i] = currentBoard[i];
          }
+
          //get the empty cells indexes from the board
-         for (i = 0; i < boardReplica.length; i++) {
-            if (boardReplica[i] !== "X" && boardReplica[i] !== "O") {
-               emptyCells.push(boardReplica[i]);
-            }
-         }
-         //mark the chosen random cell in the backend
-         //gameBoardSetup.markFieldBackend(emptyCells[randomCell], getCurrentPlayerSign());
-
-         if (checkWinner(emptyCells[randomCell])=== 'Player') {
-            /*displayController.setWinningMessage();
-            isOver = true;
-            return;*/
-            return score = -1;
-         }else if(checkWinner(emptyCells[randomCell])=== 'Computer'){
-            return score = 1;
-         }else if(emptyCells.length ===0){
-            return score = 0;
-         }
-         //checking if it's the player round or computer round
-
-      /*   function checkWinnerCase(boardReplica, currMark) {
+         const getEmptyCells = (board) => {
+            const emptyCells = [];
+            for (i = 0; i < board.length; i++) {
+              if (board[i] !== "X" && board[i] !== "O") {
+                 emptyCells.push(board[i]);
+              }
+            }  
+            return emptyCells;      
+          }
+          
+         function checkWinnerCase(currBoard, currMark) {
             if (
-                (boardReplica[0] === currMark && boardReplica[1] === currMark && boardReplica[2] === currMark) ||
-                (boardReplica[3] === currMark && boardReplica[4] === currMark && boardReplica[5] === currMark) ||
-                (boardReplica[6] === currMark && boardReplica[7] === currMark && boardReplica[8] === currMark) ||
-                (boardReplica[0] === currMark && boardReplica[3] === currMark && boardReplica[6] === currMark) ||
-                (boardReplica[1] === currMark && boardReplica[4] === currMark && boardReplica[7] === currMark) ||
-                (boardReplica[2] === currMark && boardReplica[5] === currMark && boardReplica[8] === currMark) ||
-                (boardReplica[0] === currMark && boardReplica[4] === currMark && boardReplica[8] === currMark) ||
-                (boardReplica[2] === currMark && boardReplica[4] === currMark && boardReplica[6] === currMark)
+                (currBoard[0] === currMark && currBoard[1] === currMark && currBoard[2] === currMark) ||
+                (currBoard[3] === currMark && currBoard[4] === currMark && currBoard[5] === currMark) ||
+                (currBoard[6] === currMark && currBoard[7] === currMark && currBoard[8] === currMark) ||
+                (currBoard[0] === currMark && currBoard[3] === currMark && currBoard[6] === currMark) ||
+                (currBoard[1] === currMark && currBoard[4] === currMark && currBoard[7] === currMark) ||
+                (currBoard[2] === currMark && currBoard[5] === currMark && currBoard[8] === currMark) ||
+                (currBoard[0] === currMark && currBoard[4] === currMark && currBoard[8] === currMark) ||
+                (currBoard[2] === currMark && currBoard[4] === currMark && currBoard[6] === currMark)
             ) {
                 return true;
             } else {
                 return false;
             }
-        }*/
+         }        
 
-
-         if (round === 9) {
-            displayController.setDrawMessage();
-            isOver = true;
-            return;
-         };
-         round++;
-         currentPlayer = 'Player';
-         displayController.setRoundMessage();
-
-         function minimax(boardReplic, currMark){
-           
+         function evaluate(currBoard, currMark) {
+            let winner = checkWinnerCase(currBoard, currMark);
+            return winner == playerSign ? -10 : winner == computerSign ? 10 : 0;
          }
-         
-         let bestPlay = minimax(boardReplica, getCurrentPlayerSign());
 
-         }          
+         let emptyCells = getEmptyCells(currentBoard); 
+
+         function minimax(currBoard, depth, isMax, currMark){  
+            playerSign= player.getSign();
+            computerSign= computer.getSign();
+
+            let score= evaluate(currBoard, currMark);
+            let emptyCells = getEmptyCells(currBoard);
+
+            if(score){
+               return score;
+            }
+            if(emptyCells.length ===0) {return 0};
+
+            if(isMax){
+               let best = -1000;
+
+               for (let i = 0; i < emptyCells.length; i++) {                 
+                    currBoard[emptyCells[i]] = computerSign;
+                    best = Math.max(best, minimax(currBoard, depth + 1, !isMax, computerSign));
+                    currBoard[emptyCells[i]] = i;
+               }
+               return best;
+            } else{
+               let best = 1000;
+
+               for (let i = 0; i < emptyCells.length; i++) {
+                  currBoard[emptyCells[i]] = playerSign;
+                  best = Math.min(best, minimax(currBoard, depth + 1, !isMax, playerSign));
+                  //console.log(currBoard);
+                  currBoard[emptyCells[i]] = i;
+               }
+                  return best;
+               }
+            }
+
+            function findBestMove(currBoard) {
+               let bestVal = -1000;
+               let moveIndex = -1;
+           
+               for (let i = 0; i < emptyCells.length; i++) {
+                   currBoard[emptyCells[i]] = computerSign;
+                   let moveVal = minimax(currBoard, 0, false, computerSign);
+                   currBoard[emptyCells[i]] = undefined;
+           
+                   if (moveVal > bestVal) {
+                     moveIndex = i;
+                     bestVal = moveVal;
+                 }
+               }
+               return moveIndex;
+            }
+               //console.log(bestPlay)
+               //mark the chosen random cell in the backend
+               gameBoardSetup.markFieldBackend(findBestMove(boardReplica), computerSign);
+
+              if (round === 9) {
+                  displayController.setDrawMessage();
+                  isOver = true;
+                  return;
+               };
+               round++;
+               currentPlayer = 'Player';
+               displayController.setRoundMessage();
+            }      
+  
          play(index);
-   }
-    
+         
+   }*/
+ 
    //check for winning function
    const checkWinner = (boxIndex) => {
       const winCombinations = [
